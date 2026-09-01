@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>Veille IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f7fb; --bg-deep:#eef0f7;
+  --surface:rgba(255,255,255,.72); --surface-solid:#fff;
+  --border:rgba(15,23,42,.09); --border-strong:rgba(15,23,42,.14);
+  --text:#0d1224; --muted:#5b6480; --faint:#8b93ab;
+  --accent:#5b5bd6; --accent-2:#9333ea; --accent-3:#0891b2;
+  --glow-1:rgba(99,102,241,.30); --glow-2:rgba(168,85,247,.24); --glow-3:rgba(34,211,238,.20);
+  --shadow:0 1px 2px rgba(15,23,42,.04),0 12px 32px -8px rgba(15,23,42,.10);
+  --shadow-lg:0 2px 4px rgba(15,23,42,.04),0 24px 56px -12px rgba(15,23,42,.18);
+}
+:root:not([data-theme=light]) { color-scheme: light; }
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]){
+    --bg:#07070d; --bg-deep:#04040a;
+    --surface:rgba(255,255,255,.045); --surface-solid:#101019;
+    --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.16);
+    --text:#ececf5; --muted:#9599b4; --faint:#6b6f8a;
+    --accent:#818cf8; --accent-2:#c084fc; --accent-3:#22d3ee;
+    --glow-1:rgba(99,102,241,.34); --glow-2:rgba(168,85,247,.26); --glow-3:rgba(34,211,238,.20);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px -8px rgba(0,0,0,.5);
+    --shadow-lg:0 2px 4px rgba(0,0,0,.4),0 24px 56px -12px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme=dark]{
+  --bg:#07070d; --bg-deep:#04040a;
+  --surface:rgba(255,255,255,.045); --surface-solid:#101019;
+  --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.16);
+  --text:#ececf5; --muted:#9599b4; --faint:#6b6f8a;
+  --accent:#818cf8; --accent-2:#c084fc; --accent-3:#22d3ee;
+  --glow-1:rgba(99,102,241,.34); --glow-2:rgba(168,85,247,.26); --glow-3:rgba(34,211,238,.20);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px -8px rgba(0,0,0,.5);
+  --shadow-lg:0 2px 4px rgba(0,0,0,.4),0 24px 56px -12px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg); color:var(--text); min-height:100vh;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-feature-settings:'cv02','cv03','cv04','ss01';
+  -webkit-font-smoothing:antialiased; line-height:1.6; overflow-x:hidden;
+}
+
+/* ── Fond : aurores ── */
+.aurora{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.aurora span{position:absolute;border-radius:50%;filter:blur(90px);opacity:.85;will-change:transform}
+.a1{width:60vw;height:60vw;max-width:760px;max-height:760px;background:var(--glow-1);top:-22%;left:-14%;animation:drift1 26s ease-in-out infinite}
+.a2{width:52vw;height:52vw;max-width:660px;max-height:660px;background:var(--glow-2);top:14%;right:-18%;animation:drift2 32s ease-in-out infinite}
+.a3{width:46vw;height:46vw;max-width:560px;max-height:560px;background:var(--glow-3);bottom:-20%;left:22%;animation:drift3 29s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(9%,7%) scale(1.14)}}
+@keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-11%,10%) scale(.88)}}
+@keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(7%,-9%) scale(1.1)}}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(circle at 1px 1px,var(--border) 1px,transparent 0);background-size:34px 34px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 55% at 50% 0%,#000 5%,transparent 75%);
+          mask-image:radial-gradient(ellipse 70% 55% at 50% 0%,#000 5%,transparent 75%)}
+
+.wrap{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:clamp(28px,6vw,68px) clamp(18px,4vw,28px) 72px}
+
+/* ── Barre du haut ── */
+.top{display:flex;justify-content:flex-end;margin-bottom:clamp(24px,5vw,44px)}
+.toggle{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);
+  color:var(--muted);border-radius:999px;padding:9px 15px;font:600 12px/1 'Inter',sans-serif;cursor:pointer;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:color .2s,border-color .2s,transform .2s}
+.toggle:hover{color:var(--text);border-color:var(--border-strong);transform:translateY(-1px)}
+.toggle:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.toggle svg{width:14px;height:14px}
+
+/* ── En-tête ── */
+header{text-align:center;margin-bottom:clamp(38px,7vw,60px)}
+.mark{width:74px;height:74px;margin:0 auto 24px;border-radius:22px;display:grid;place-items:center;font-size:34px;
+  background:linear-gradient(140deg,var(--accent),var(--accent-2) 55%,var(--accent-3));
+  box-shadow:0 12px 34px -8px var(--glow-1),inset 0 1px 0 rgba(255,255,255,.4);
+  animation:float 6s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+h1{font:400 clamp(46px,10vw,78px)/1 'Instrument Serif',Georgia,serif;letter-spacing:-.02em;margin-bottom:14px;
+  background:linear-gradient(115deg,var(--text) 18%,var(--accent) 52%,var(--accent-2) 78%,var(--text));
+  background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shine 9s linear infinite}
+@keyframes shine{to{background-position:220% center}}
+.tagline{color:var(--muted);font-size:clamp(14px,2.6vw,16px);max-width:44ch;margin:0 auto}
+
+/* ── Statistiques ── */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:clamp(30px,6vw,42px) auto 0;max-width:520px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 10px;text-align:center;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.stat b{display:block;font:800 clamp(21px,4.4vw,27px)/1.1 'Inter',sans-serif;letter-spacing:-.02em;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{display:block;margin-top:5px;font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
+
+/* ── Titres de section ── */
+.sec{display:flex;align-items:center;gap:14px;margin:clamp(44px,8vw,64px) 0 20px}
+.sec h2{font:700 12px/1 'Inter',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+.sec i{flex:1;height:1px;background:linear-gradient(90deg,var(--border-strong),transparent)}
+
+/* ── Digest à la une ── */
+.hero{display:block;text-decoration:none;color:inherit;position:relative;overflow:hidden;border-radius:26px;
+  background:var(--surface);border:1px solid var(--border);padding:clamp(26px,5vw,40px);box-shadow:var(--shadow);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
+.hero::before{content:'';position:absolute;inset:0 0 auto;height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2),var(--accent-3))}
+.hero::after{content:'';position:absolute;inset:-2px;border-radius:26px;pointer-events:none;opacity:0;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),var(--glow-1),transparent 62%);transition:opacity .35s}
+.hero:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--border-strong)}
+.hero:hover::after{opacity:1}
+.hero:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.hero .row{position:relative;z-index:1}
+.pill{display:inline-flex;align-items:center;gap:7px;font:700 10.5px/1 'Inter',sans-serif;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent) 26%,transparent);border-radius:999px;padding:6px 13px;margin-bottom:18px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
+.hero h3{font:400 clamp(26px,5.4vw,40px)/1.15 'Instrument Serif',Georgia,serif;letter-spacing:-.015em;margin-bottom:10px}
+.hero p{color:var(--muted);font-size:14.5px;margin-bottom:26px;max-width:52ch}
+.cta{display:inline-flex;align-items:center;gap:9px;font:700 13.5px/1 'Inter',sans-serif;color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));border-radius:12px;padding:13px 24px;
+  box-shadow:0 8px 22px -8px var(--glow-1);transition:gap .25s,box-shadow .25s}
+.hero:hover .cta{gap:14px;box-shadow:0 12px 30px -8px var(--glow-1)}
+
+/* ── Archives ── */
+.list{display:flex;flex-direction:column;gap:9px}
+.item{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;border-radius:15px;padding:15px 19px;
+  background:var(--surface);border:1px solid var(--border);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transition:transform .22s,border-color .22s,background .22s}
+.item:hover{transform:translateX(5px);border-color:var(--border-strong)}
+.item:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.num{flex:none;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+  font:700 12px/1 'Inter',sans-serif;color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 10%,transparent);border:1px solid color-mix(in srgb,var(--accent) 20%,transparent)}
+.meta{flex:1;min-width:0}
+.meta b{display:block;font:600 14.5px/1.35 'Inter',sans-serif;letter-spacing:-.01em}
+.meta span{font-size:12px;color:var(--faint)}
+.arrow{flex:none;color:var(--faint);transition:transform .22s,color .22s}
+.item:hover .arrow{transform:translateX(3px);color:var(--accent)}
+
+/* ── États ── */
+.skel{height:68px;border-radius:15px;background:var(--surface);border:1px solid var(--border);
+  position:relative;overflow:hidden}
+.skel::after{content:'';position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,var(--border-strong),transparent);animation:sweep 1.5s infinite}
+@keyframes sweep{100%{transform:translateX(100%)}}
+.msg{text-align:center;padding:34px 22px;border-radius:18px;background:var(--surface);border:1px dashed var(--border-strong);
+  color:var(--muted);font-size:13.5px}
+.msg b{display:block;color:var(--text);font-size:15px;margin-bottom:7px}
+.msg code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 10%,transparent);padding:2px 6px;border-radius:5px}
+
+/* ── Sources ── */
+.srcs{display:flex;flex-wrap:wrap;gap:8px}
+.src{font:500 12.5px/1 'Inter',sans-serif;color:var(--muted);background:var(--surface);border:1px solid var(--border);
+  border-radius:999px;padding:9px 15px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:color .2s,border-color .2s,transform .2s}
+.src:hover{color:var(--text);border-color:var(--border-strong);transform:translateY(-2px)}
+
+/* ── Pied de page ── */
+footer{margin-top:clamp(52px,9vw,80px);padding-top:26px;border-top:1px solid var(--border);text-align:center}
+footer p{font-size:12px;color:var(--faint);line-height:1.75;max-width:60ch;margin:0 auto}
+footer .cad{margin-top:14px;font-size:11.5px;color:var(--muted)}
+footer .cad b{color:var(--text);font-weight:600}
+
+.rise{opacity:0;transform:translateY(18px);animation:rise .7s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+
+@media (max-width:560px){
+  .stats{grid-template-columns:1fr;max-width:280px}
+  .stat{display:flex;align-items:baseline;justify-content:center;gap:10px;padding:13px}
+  .stat b,.stat span{margin:0}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .rise{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="wrap">
+
+  <div class="top">
+    <button class="toggle" id="tg" type="button" aria-label="Changer de thème">
+      <svg id="tgi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <span id="tgt">Clair</span>
+    </button>
+  </div>
+
+  <header class="rise">
+    <div class="mark" aria-hidden="true">🤖</div>
+    <h1>Veille IA</h1>
+    <p class="tagline">Les actualités de l'intelligence artificielle qui comptent, filtrées et résumées deux fois par semaine.</p>
+    <div class="stats">
+      <div class="stat"><b id="s-count">—</b><span>digests</span></div>
+      <div class="stat"><b>8</b><span>sources</span></div>
+      <div class="stat"><b>2×</b><span>par semaine</span></div>
+    </div>
+  </header>
+
+  <section class="rise" style="animation-delay:.1s">
+    <div class="sec"><h2>À la une</h2><i></i></div>
+    <div id="latest"><div class="skel" style="height:210px"></div></div>
+  </section>
+
+  <section class="rise" style="animation-delay:.18s">
+    <div class="sec"><h2>Archives</h2><i></i></div>
+    <div class="list" id="archive">
+      <div class="skel"></div><div class="skel"></div><div class="skel"></div>
+    </div>
+  </section>
+
+  <section class="rise" style="animation-delay:.26s">
+    <div class="sec"><h2>Sources analysées</h2><i></i></div>
+    <div class="srcs">
+      <span class="src">Anthropic</span><span class="src">OpenAI</span><span class="src">Google AI</span>
+      <span class="src">Hugging Face</span><span class="src">The Decoder</span><span class="src">TechCrunch</span>
+      <span class="src">The Verge</span><span class="src">Siècle Digital</span>
+    </div>
+  </section>
+
+  <footer class="rise" style="animation-delay:.34s">
+    <p>Veille interne générée automatiquement par IA à partir de sources publiques. Le contenu peut comporter des erreurs et ne constitue ni un conseil professionnel, ni une position officielle d'une quelconque entreprise ou de son éditeur.</p>
+    <p class="cad">Publication automatique <b>chaque lundi et jeudi</b> — sélection des 5 actualités les plus marquantes des 72 dernières heures.</p>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ── Thème ── */
+  var root = document.documentElement, btn = document.getElementById('tg'),
+      lbl = document.getElementById('tgt'), ico = document.getElementById('tgi');
+  var SUN = '<circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+  var MOON = '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/>';
+
+  function systemDark(){
+    try { return window.matchMedia('(prefers-color-scheme:dark)').matches; } catch(e){ return false; }
+  }
+  function isDark(){
+    var t = root.getAttribute('data-theme');
+    return t ? t === 'dark' : systemDark();
+  }
+  function paint(){
+    var d = isDark();
+    ico.innerHTML = d ? SUN : MOON;
+    lbl.textContent = d ? 'Clair' : 'Sombre';
+  }
+  try {
+    var saved = localStorage.getItem('veille-theme');
+    if (saved === 'dark' || saved === 'light') root.setAttribute('data-theme', saved);
+  } catch(e){}
+  paint();
+  btn.addEventListener('click', function(){
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('veille-theme', next); } catch(e){}
+    paint();
+  });
+
+  /* ── Halo qui suit le curseur sur la carte à la une ── */
+  document.addEventListener('pointermove', function(e){
+    var h = e.target && e.target.closest ? e.target.closest('.hero') : null;
+    if (!h) return;
+    var r = h.getBoundingClientRect();
+    h.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    h.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }, {passive:true});
+
+  /* ── Listing des digests ──
+     Le dépôt est public : l'API Contents répond sans authentification.
+     Si elle échoue (hors ligne, quota de 60 req/h par IP, dépôt repassé
+     en privé), on affiche un repli explicite plutôt qu'une page vide. */
+  var API = 'https://api.github.com/repos/BenoitAchette/veille-ia/contents/digests';
+  var RX = /^digest-(\d{4})-(\d{2})-(\d{2})\.html$/;
+  var latestEl = document.getElementById('latest'),
+      archEl = document.getElementById('archive'),
+      countEl = document.getElementById('s-count');
+
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function frDate(d, withWeekday){
+    var o = {day:'numeric', month:'long', year:'numeric'};
+    if (withWeekday) o.weekday = 'long';
+    var s = d.toLocaleDateString('fr-FR', o);
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+  function relative(d){
+    /* Comparaison de jours calendaires, pas de millisecondes ecoulees : les
+       dates de digest sont a minuit UTC, donc un ecart en ms ferait basculer
+       le digest du jour sur "hier" des le milieu de journee. */
+    var n = new Date();
+    var today = Date.UTC(n.getFullYear(), n.getMonth(), n.getDate());
+    var days = Math.round((today - d.getTime()) / 86400000);
+    if (days <= 0) return "aujourd'hui";
+    if (days === 1) return 'hier';
+    if (days < 7)  return 'il y a ' + days + ' jours';
+    if (days < 14) return 'il y a une semaine';
+    if (days < 60) return 'il y a ' + Math.round(days / 7) + ' semaines';
+    return 'il y a ' + Math.round(days / 30) + ' mois';
+  }
+  function fail(msg, detail){
+    latestEl.innerHTML = '<div class="msg"><b>' + esc(msg) + '</b>' + detail + '</div>';
+    archEl.innerHTML = '';
+    countEl.textContent = '—';
+  }
+
+  fetch(API, {headers:{'Accept':'application/vnd.github+json'}})
+    .then(function(r){
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(files){
+      if (!Array.isArray(files)) throw new Error('réponse inattendue');
+
+      var digests = files.map(function(f){
+        var m = RX.exec(f.name || '');
+        if (!m) return null;
+        return {
+          name: f.name,
+          date: new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]))
+        };
+      }).filter(Boolean).sort(function(a, b){ return b.date - a.date; });
+
+      countEl.textContent = digests.length || '0';
+
+      if (!digests.length){
+        fail('Aucun digest publié pour le moment',
+             '<span>Le prochain paraît automatiquement lundi ou jeudi à 9h.</span>');
+        return;
+      }
+
+      var top = digests[0];
+      latestEl.innerHTML =
+        '<a class="hero" href="digests/' + esc(top.name) + '">' +
+          '<div class="row">' +
+            '<span class="pill"><span class="dot"></span>Dernier digest · ' + esc(relative(top.date)) + '</span>' +
+            '<h3>' + esc(frDate(top.date, true)) + '</h3>' +
+            '<p>Les 5 actualités IA les plus marquantes du moment, résumées et remises dans leur contexte métier.</p>' +
+            '<span class="cta">Lire le digest' +
+              '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>' +
+            '</span>' +
+          '</div>' +
+        '</a>';
+
+      var rest = digests.slice(1);
+      if (!rest.length){
+        archEl.innerHTML =
+          '<div class="msg"><b>Pas encore d\'archives</b>' +
+          '<span>Les digests précédents s\'accumuleront ici au fil des publications.</span></div>';
+        return;
+      }
+      archEl.innerHTML = rest.map(function(d, i){
+        return '<a class="item" href="digests/' + esc(d.name) + '">' +
+          '<span class="num">' + String(rest.length - i).padStart(2, '0') + '</span>' +
+          '<span class="meta"><b>' + esc(frDate(d.date, true)) + '</b>' +
+          '<span>' + esc(relative(d.date)) + '</span></span>' +
+          '<svg class="arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>' +
+        '</a>';
+      }).join('');
+    })
+    .catch(function(err){
+      fail('Liste des digests indisponible',
+           '<span>L\'API GitHub n\'a pas répondu (' + esc(err.message) + '). ' +
+           'Les digests restent accessibles par lien direct : ' +
+           '<code>digests/digest-AAAA-MM-JJ.html</code></span>');
+    });
+})();
+</script>
+</body>
+</html>

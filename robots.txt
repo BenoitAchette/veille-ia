@@ -1,0 +1,8 @@
+# Site de veille interne - indexation non souhaitee.
+# NB: sur un project page (user.github.io/veille-ia/), ce fichier n'est PAS lu
+# par les crawlers (ils ne lisent robots.txt qu'a la racine du domaine).
+# Le blocage effectif est le <meta name="robots" content="noindex"> de chaque page.
+# Ce fichier devient utile si le site passe un jour sur un domaine dedie.
+
+User-agent: *
+Disallow: /
